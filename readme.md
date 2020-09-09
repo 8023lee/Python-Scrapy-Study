@@ -81,5 +81,5 @@ Scrapy/Selenium/Flask 学习项目
     修改文件 config.ini.example 为 config.ini，并修改文件这种的配置项
 
 4、相关文档
-- [开发规范](开发规范.md)
-- [Ubuntu线上无界面Selenium安装](Ubuntu线上无界面服务器使用selenium+chrome+headless.md)
+- [开发规范](doc/开发规范.md)
+- [Ubuntu线上无界面Selenium安装](doc/Ubuntu线上无界面服务器使用selenium+chrome+headless.md)
