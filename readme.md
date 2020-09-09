@@ -7,6 +7,12 @@ Scrapy/Selenium/Flask 学习项目
 - /task、/libs目录：CSDN、和讯博客、简书、新浪博客、水木社区的博客/帖子的自动发布
 - flask_site目录：使用Flask框架，实现了通过web页面，连接水木社区 telnet，进行简单的积分兑换操作
 
+相关文档
+====
+- [开发规范](doc/开发规范.md)
+- [Ubuntu线上无界面Selenium安装](doc/Ubuntu线上无界面服务器使用selenium+chrome+headless.md)
+
+
 # 依赖库
 
 1、浏览器驱动：chromedriver
@@ -80,6 +86,3 @@ Scrapy/Selenium/Flask 学习项目
 
     修改文件 config.ini.example 为 config.ini，并修改文件这种的配置项
 
-4、相关文档
-- [开发规范](doc/开发规范.md)
-- [Ubuntu线上无界面Selenium安装](doc/Ubuntu线上无界面服务器使用selenium+chrome+headless.md)
