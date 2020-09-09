@@ -1,0 +1,134 @@
+{% extends "layout_nonav.html" %}
+{% block title %}水木社区积分转让{% endblock %}
+{% block body %}
+
+<div class="layui-form layui-form-pane" action="#">
+  <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">输出：</label>
+    <div class="layui-input-block">
+      <textarea id="txt-out" name="txt-out" class="layui-textarea" rows="10"  placeholder="" readonly></textarea>
+    </div>
+  </div>
+
+  <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">输入：</label>
+    <div class="layui-input-block">
+      <input id="txt-input" name="txt-input" placeholder="请输入命令" class="layui-input" required  lay-verify="required" autocomplete="off" >
+      <input id="txt-isusername" name="txt-isusername" type="hidden" />
+    </div>
+  </div>
+
+  <div class="layui-form-item layui-form-text">
+    <div class="layui-input-block">
+      <button class="layui-btn" data-val="open" lay-filter="btn-shortcut">Telnet连接</button>
+      <button class="layui-btn" data-val="close" lay-filter="btn-shortcut">Telnet关闭</button>
+      <button class="layui-btn" lay-filter="btn-submit">发送</button>
+    </div>
+  </div>
+
+  <div class="layui-form-item layui-form-text">
+    <div class="layui-input-block">
+      <button class="layui-btn layui-bg-gray" data-val="I" lay-filter="btn-shortcut">I</button>
+      <button class="layui-btn layui-bg-gray" data-val="Z" lay-filter="btn-shortcut">Z</button>
+      <button class="layui-btn layui-bg-gray" data-val="8" lay-filter="btn-shortcut">8</button>
+      <button class="layui-btn layui-bg-gray" data-val="y" lay-filter="btn-shortcut">Y</button>
+      <button class="layui-btn layui-bg-gray" data-val="enter" lay-filter="btn-shortcut">Enter</button>
+    </div>
+  </div>
+
+  <div class="layui-form-item layui-form-text">
+    <div class="layui-input-block">
+      <button class="layui-btn layui-bg-gray" data-val="0" lay-filter="btn-shortcut">0</button>
+      <button class="layui-btn layui-bg-gray" data-val="4" lay-filter="btn-shortcut">4</button>
+      <button class="layui-btn layui-bg-gray" data-val="E" lay-filter="btn-shortcut">E</button>
+      <button class="layui-btn layui-bg-gray" data-val="G" lay-filter="btn-shortcut">G</button>
+      <button class="layui-btn layui-bg-gray" data-val="q" lay-filter="btn-shortcut">Q</button>
+    </div>
+  </div>
+
+</div>
+
+
+<div>
+<hr>
+<H3>账户列表：</H3>
+<table id="acct_list" lay-filter="acct_list"></table>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+layui.use(['layer', 'form','table'], function(){
+  let layer = layui.layer
+          ,form = layui.form
+          ,$ = layui.$
+          ,table = layui.table;
+
+  $('button[lay-filter="btn-shortcut"]').on('click', function () {
+    $('#txt-input').val($(this).attr('data-val'));
+    $('button[lay-filter="btn-submit"]').click();
+    return false
+  });
+
+  $('button[lay-filter="btn-submit"]').on('click', function () {
+    let cmdval = $('#txt-input').val();
+    let isusername = $('#txt-isusername').val();
+    $.ajax({
+        url:'{{ url_for("newsmthscore.transfer_docmd") }}',
+        type:'post',
+        data:{cmd:cmdval, isusername:isusername},
+        beforeSend:function () {
+            this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
+            $('#txt-input').val('');
+            $('#txt-isusername').val('')
+        },
+        success:function(response){
+          $('#txt-out').val($('#txt-out').val() + '\n' + response);
+          let scrollTop = $("#txt-out")[0].scrollHeight;
+          $("#txt-out").scrollTop(scrollTop);
+        },
+        complete: function () {
+            layer.close(this.layerIndex);
+        },
+    });
+
+    return false;
+  });
+
+  // 账户列表
+  table.render({
+    elem: '#acct_list'
+    ,height: 312
+    ,url: '{{ url_for("newsmthscore.acct_list") }}' //数据接口
+    // ,toolbar: 'default'
+    ,page: true //开启分页
+    ,limit: 10
+    ,title: '账户列表'
+    ,cols: [[ //表头
+      {field: 'loginname', title: '登录名', width: 120 }
+      ,{field: 'score', title: '积分', width: 80,  sort: true}
+      ,{field: 'loginStatus', title: '登录状态'}
+      ,{fixed: 'right', width:60, align:'center', toolbar: '#barDemo'} //这里的toolbar值是模板元素的选择器
+    ]]
+  });
+
+  //监听工具条
+  table.on('tool(acct_list)', function(obj){
+    let data = obj.data;
+    if(obj.event === 'select'){
+      // layer.msg('ID：'+ data.id + ' 的选中操作');
+      $('#txt-input').val(data.loginname);
+      $('#txt-isusername').val(1);
+      $('button[lay-filter="btn-submit"]').click();
+    }
+  });
+
+});
+</script>
+
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-xs" lay-event="select">转让</a>
+</script>
+
+{% endblock %}
